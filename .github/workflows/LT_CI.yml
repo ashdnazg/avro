@@ -1,0 +1,24 @@
+name: Build Avro iOS static lib
+on: [push, pull_request]
+
+jobs:
+  build-ios:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Build Release
+      run: |
+        ./build_ios_lib.py out --configuration Release
+        zip --symlinks -r avro_ios_lib.zip out/product
+        zip --symlinks -r avro_ios_build_data.zip out
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ios_lib
+        path: avro_ios_lib.zip
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ios_build_data
+        path: avro_ios_build_data.zip
