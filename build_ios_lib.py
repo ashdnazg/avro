@@ -40,8 +40,6 @@ class Builder:
         os.makedirs(out_dir, exist_ok=True)
         build_path = os.path.join(out_dir, lib_name, "build")
 
-
-
         for platform in self.get_platforms():
             platform_build_dir = os.path.join(build_path, platform)
             os.makedirs(platform_build_dir, exist_ok=True)
@@ -62,14 +60,14 @@ class Builder:
             platform_lib_dir = os.path.join(platform_install_dir, "lib")
             self.merge_libs_in_directory(platform_lib_dir, platform_merged_lib_file)
 
-        final_lib_path = os.path.join(out_dir, "product", "lib")
-        final_include_path = os.path.join(out_dir, "product", "include")
+        framework_path = os.path.join(out_dir, f"{lib_name}.framework")
+        framework_include_path = os.path.join(framework_path, "include")
         os.makedirs(final_lib_path, exist_ok=True)
         os.makedirs(final_include_path, exist_ok=True)
 
-        self.create_universal_static_lib(platform_libs_path, os.path.join(final_lib_path, f"lib{lib_name}.a"))
+        self.create_universal_static_lib(platform_libs_path, os.path.join(framework_path, lib_name))
         platform_include_dir = os.path.join(self.platform_install_dir(out_dir, platforms[0]), "include")
-        shutil.copytree(platform_include_dir, final_include_path, dirs_exist_ok=True)
+        shutil.copytree(platform_include_dir, framework_include_path, dirs_exist_ok=True)
 
     def platform_install_dir(self, out_dir, platform):
         return os.path.join(out_dir, platform)
